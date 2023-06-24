@@ -1,7 +1,7 @@
 import os
 import gc
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import tensorflow as tf
 
@@ -64,8 +64,10 @@ node_set = [16]
 
 from tensorflow import keras
 
+folder_path = os.path.join(os.getcwd(), '../learn_output')
+
 for node_num in node_set:
-    for training_id in range(10,30):
+    for training_id in range(171,400):
         inputs = keras.Input(shape=(26,), name="digits")
         x = keras.layers.Dense(node_num, activation="relu", kernel_initializer="uniform",bias_initializer="uniform")(inputs)
         outputs = keras.layers.Dense(2, name="predictions",kernel_initializer="uniform",bias_initializer="uniform")(x)
@@ -80,7 +82,7 @@ for node_num in node_set:
         
         weight_record = []
         print("Start training at width %d, id %d" % (node_num, training_id))
-        for epoch in range(200):
+        for epoch in range(50):
             history = model.fit(x_train_reduced, y_train, validation_data=(x_test_reduced, y_test), batch_size=128, epochs=1, verbose=2)
             cur_weights = [w.numpy() for w in model.trainable_weights]
             # print(cur_weights)
@@ -92,6 +94,7 @@ for node_num in node_set:
         
         # print(weight_record)
         print(np.shape(weight_record))
-        np.save('learn_output/weight_%d_%d.npy' % (node_num, training_id), weight_record)
+        file_path = os.path.join(folder_path, 'weight50_%d_%d.npy' % (node_num, training_id))
+        np.save(file_path, weight_record)
         del weight_record
         gc.collect()
