@@ -1,7 +1,7 @@
 import os
 import gc
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 import tensorflow as tf
 
@@ -56,9 +56,9 @@ x_test_reduced = pca.transform(x_test.reshape(x_test.shape[0], -1))
 print("Original dimensions:", x_train.shape)
 print("Reduced dimensions:", x_train_reduced.shape)
 
-# node_set = [16, 32, 64, 128, 256, 512, 1024]
+node_set = [32, 64, 128, 256, 512, 1024]
 # node_set = [32, 64]
-node_set = [16]
+# node_set = [16]
 
 
 
@@ -67,7 +67,7 @@ from tensorflow import keras
 folder_path = os.path.join(os.getcwd(), '../learn_output')
 
 for node_num in node_set:
-    for training_id in range(171,400):
+    for training_id in range(200,400):
         inputs = keras.Input(shape=(26,), name="digits")
         x = keras.layers.Dense(node_num, activation="relu", kernel_initializer="uniform",bias_initializer="uniform")(inputs)
         outputs = keras.layers.Dense(2, name="predictions",kernel_initializer="uniform",bias_initializer="uniform")(x)
