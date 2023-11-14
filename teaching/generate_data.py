@@ -1,7 +1,7 @@
 import os
 import gc
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 import tensorflow as tf
 
@@ -56,9 +56,9 @@ x_test_reduced = pca.transform(x_test.reshape(x_test.shape[0], -1))
 print("Original dimensions:", x_train.shape)
 print("Reduced dimensions:", x_train_reduced.shape)
 
-node_set = [32, 64, 128, 256, 512, 1024]
+# node_set = [32, 64, 128, 256, 512, 1024]
 # node_set = [32, 64]
-# node_set = [16]
+node_set = [16]
 
 
 
@@ -67,14 +67,15 @@ from tensorflow import keras
 folder_path = os.path.join(os.getcwd(), '../learn_output')
 
 for node_num in node_set:
-    for training_id in range(200,400):
+    for training_id in range(200):
         inputs = keras.Input(shape=(26,), name="digits")
         x = keras.layers.Dense(node_num, activation="relu", kernel_initializer="uniform",bias_initializer="uniform")(inputs)
         outputs = keras.layers.Dense(2, name="predictions",kernel_initializer="uniform",bias_initializer="uniform")(x)
         model = keras.Model(inputs=inputs, outputs=outputs)
         
+        lr = 0.001
         # Instantiate an optimizer.
-        optimizer = tf.keras.optimizers.SGD(learning_rate=0.01)
+        optimizer = tf.keras.optimizers.SGD(learning_rate=lr)
         # Instantiate a loss function.
         loss_fn = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
         # Compile the model
@@ -94,7 +95,7 @@ for node_num in node_set:
         
         # print(weight_record)
         print(np.shape(weight_record))
-        file_path = os.path.join(folder_path, 'weight50_%d_%d.npy' % (node_num, training_id))
+        file_path = os.path.join(folder_path, 'weight50_%d_%d_1e3.npy' % (node_num, training_id))
         np.save(file_path, weight_record)
         del weight_record
         gc.collect()
